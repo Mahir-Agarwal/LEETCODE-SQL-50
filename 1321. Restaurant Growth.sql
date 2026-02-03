@@ -1,13 +1,12 @@
 # Write your MySQL query statement below
 
-select res as  id , count(*) as num from (
-select accepter_id as res from RequestAccepted 
-union all
-select requester_id as res from RequestAccepted 
-) t
-group by res 
-order by num desc limit 1 ;
+SELECT a.visited_on AS visited_on, SUM(b.day_sum) AS amount,
+       ROUND(AVG(b.day_sum), 2) AS average_amount
+FROM
+  (SELECT visited_on, SUM(amount) AS day_sum FROM Customer GROUP BY visited_on ) a,
+  (SELECT visited_on, SUM(amount) AS day_sum FROM Customer GROUP BY visited_on ) b
+WHERE DATEDIFF(a.visited_on, b.visited_on) BETWEEN 0 AND 6
+GROUP BY a.visited_on
+HAVING COUNT(b.visited_on) = 7 
 
-
--- T.C -> O(n)
--- S.C -> O(n)
+-- T.C -> 
